@@ -109,7 +109,7 @@ Let's replace RW (adaptive random-walk Metropolis-Hastings) samplers with slice 
 
 ```{r, slice}
 mcmcConf <- configureMCMC(DEmodel)
-params_for_slice <- "sex_int" # Notice: Not just one node
+params_for_slice <- "sex_int" # Sex intercept; Notice: Not just one node
 mcmcConf$printSamplers(params_for_slice)
 mcmcConf$removeSamplers(params_for_slice) # Nodes will be expanded
 expanded_params_for_slice <- DEmodel$expandNodeNames(params_for_slice)
@@ -218,6 +218,7 @@ mcmcConfBlock$removeSamplers(c('sex_int','length_coef'))
 # Add RW_block samplers, modifying adaptation behavior.
 mcmcConfBlock$addSampler(target = c('sex_int[1]', 'length_coef[1]'),
                  type = "RW_block",
+                 # control argument lets you change the sampler parameters
                  control = list(propCov = diag(c(.1, .01)), adaptInterval = 20, 
                                 adaptFactorExponent = 0.25))
 mcmcConfBlock$addSampler(target = c('sex_int[2]', 'length_coef[2]'),

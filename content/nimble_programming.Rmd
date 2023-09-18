@@ -80,7 +80,9 @@ regrModel <- nimbleModel(regrCode, data = list(y = y), constants = list(n = n, x
 ```
 
 ```{r}
+# calcDeps is a 'function generator' here creating a funciton specific for this regression
 calcDeps_regr <- calcDeps(regrModel, c('b0', 'b1', 'sigma'))
+# calcDeps_regr has a 'run' method b/c it was declared in nimbleFunction (line 49)
 calcDeps_regr$run()   ## second stage: run code
 ```
 
@@ -192,10 +194,11 @@ cObjective <- compileNimble(rObjective, project = regrModel)
 
 Now let's try using it (we'll need to ignore the warnings caused by negative sd values).
 
-```{r, regr-optimize}
+```{r, regr-optimize, warning=FALSE}
 set.seed(1)
 origWarn <- options()$warn
 options(warn = -1)   ## turn off the warnings to keep the html cleaner
+# AJ mod: put the warning turnoff in code block settings instead for Rmd
 system.time(optR <- optim(c(0, 0, 1), rObjective$run, control = list(fnscale = -1)))
 system.time(optC <- optim(c(0, 0, 1), cObjective$run, control = list(fnscale = -1)))
 optR
@@ -248,7 +251,8 @@ cObjective <- compileNimble(rObjective, project = regrModel)
 
 Now let's try using it. We need to use a derivative-based optimization algorithm such as the BFGS (Newton-like) method rather than a derivative-free method like Nelder-Mead.
 
-```{r, regr-optimize-grad}
+```{r, regr-optimize-grad, warning=FALSE}
+# AJ note: turned warnings off in code block parameters
 set.seed(1)
 system.time(optR <- optim(c(0, 0, 1), rObjective$fun, gr = rObjective$grad,
                  method = "BFGS", control = list(fnscale = -1)))

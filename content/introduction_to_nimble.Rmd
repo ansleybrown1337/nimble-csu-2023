@@ -597,10 +597,12 @@ The purpose of this is to cache values and avoid recalculation when it is not ne
 If we change `sigma2` and then directly try to work with `y`, we'll cause (silent errors) because the lifted standard deviation has not been updated.
 
 ```{r, lifted}
+# example of incorrect method using sigma2
 model3$sigma2 <- 100
 model3$lifted_sqrt_oPsigma2_cP
 model3$simulate('y', includeData = TRUE)
 summary(model3$y)
+# example of correct method using all node dependencies
 depNodes <- model3$getDependencies('sigma2', self = FALSE)
 depNodes
 model3$simulate(depNodes, includeData = TRUE)
